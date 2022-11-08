@@ -29,6 +29,7 @@ namespace MQTTnet.TestApp
             Console.WriteLine("d = Start server with logging");
             Console.WriteLine("e = Start Message Throughput Test");
             Console.WriteLine("f = Start AsyncLock Test");
+            Console.WriteLine("g = Start TLS communication");
 
             var pressedKey = Console.ReadKey(true);
             if (pressedKey.KeyChar == '1')
@@ -92,6 +93,10 @@ namespace MQTTnet.TestApp
             else if (pressedKey.KeyChar == 'f')
             {
                 Task.Run(new AsyncLockTest().Run);
+            }
+            else if (pressedKey.KeyChar == 'g')
+            {
+                Task.Run(new TLSComm().TLSCommAsync);
             }
 
             Thread.Sleep(Timeout.Infinite);

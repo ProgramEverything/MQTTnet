@@ -21,16 +21,18 @@ namespace MQTTnet.TestApp
                 var logger = new MqttNetEventLogger();
                 MqttNetConsoleLogger.ForwardToConsole(logger);
 
+                // 客户端参数
                 var factory = new MqttFactory(logger);
                 var client = factory.CreateMqttClient();
                 var clientOptions = new MqttClientOptions
                 {
                     ChannelOptions = new MqttClientTcpOptions
                     {
-                        Server = "127.0.0.1"
+                        Server = "192.168.100.7"
                     }
                 };
 
+                // 添加“收到订阅消息”的委托函数
                 client.ApplicationMessageReceivedAsync += e =>
                 {
                     Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
@@ -42,16 +44,16 @@ namespace MQTTnet.TestApp
                     
                     return CompletedTask.Instance;
                 };
-
+                // 添加“连接到服务器”的委托函数
                 client.ConnectedAsync += async e =>
                 {
                     Console.WriteLine("### CONNECTED WITH SERVER ###");
 
-                    await client.SubscribeAsync("#");
+                    await client.SubscribeAsync("test");
 
                     Console.WriteLine("### SUBSCRIBED ###");
                 };
-
+                // 添加“断开到服务器的连接”的委托函数
                 client.DisconnectedAsync += async e =>
                 {
                     Console.WriteLine("### DISCONNECTED FROM SERVER ###");
@@ -67,9 +69,10 @@ namespace MQTTnet.TestApp
                     }
                 };
 
+                // 发起连接
                 try
                 {
-                    await client.ConnectAsync(clientOptions);
+                    await client.ConnectAsync(clientOptions);   // 如果连接成功那么触发“连接到服务器”的委托函数
                 }
                 catch (Exception exception)
                 {
@@ -80,9 +83,9 @@ namespace MQTTnet.TestApp
 
                 while (true)
                 {
-                    Console.ReadLine();
+                    Console.ReadLine();     // 命令行停在这里
 
-                    await client.SubscribeAsync("test");
+                    await client.SubscribeAsync("A/B/C");
 
                     var applicationMessage = new MqttApplicationMessageBuilder()
                         .WithTopic("A/B/C")
